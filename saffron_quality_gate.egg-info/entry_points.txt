@@ -1,0 +1,3 @@
+[console_scripts]
+saffron-quality-gate = sqg.cli:main
+sqg = sqg.cli:main

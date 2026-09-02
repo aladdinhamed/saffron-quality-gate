@@ -1,0 +1,28 @@
+name: SQG Quality Gate
+
+on:
+  push:
+    branches: [main, staging]
+    paths: ['sqg/**', '*.py', 'pyproject.toml']
+  pull_request:
+    branches: [main]
+    paths: ['sqg/**', '*.py', 'pyproject.toml']
+
+jobs:
+  quality-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install SQG
+        run: |
+          pip install -e .
+          pip install ruff mypy bandit pytest
+      - name: Run Anti-Slop Scan
+        run: sqg scan --path . --format json
+      - name: Run Quality Audit
+        run: sqg audit --path . --format json
+      - name: Gate Summary
+        run: sqg scan --path . --format summary
